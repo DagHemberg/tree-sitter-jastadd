@@ -1,0 +1,101 @@
+==================
+Simple type with list components
+==================
+
+Grammar ::= TypeDecl* RegionDecl*;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    components: (component (list_component (id type: (identifier))))
+    components: (component (list_component (id type: (identifier))))))
+
+==================
+Type with no components
+==================
+
+Abstract;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)))
+
+==================
+Superclass inheritance, no components
+==================
+
+ClassDecl : TypeDecl;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    superclass: (identifier)))
+
+==================
+Abstract type
+==================
+
+abstract TypeDecl ::= IdDecl;
+
+---
+
+(source_file
+  (type_decl
+    abstract: (abstract)
+    name: (identifier)
+    components: (component (aggregate_component (id type: (identifier))))))
+
+==================
+Abstract type with superclass and mixed components
+==================
+
+abstract ASTDecl : TypeDecl ::= [Abstract] IdDecl [SuperClass:IdUse] Component*;
+
+---
+
+(source_file
+  (type_decl
+    abstract: (abstract)
+    name: (identifier)
+    superclass: (identifier)
+    components: (component (optional_component (id type: (identifier))))
+    components: (component (aggregate_component (id type: (identifier))))
+    components: (component
+      (optional_component (id label: (identifier) type: (identifier))))
+    components: (component (list_component (id type: (identifier))))))
+
+==================
+Region declaration
+==================
+
+region A;
+
+---
+
+(source_file
+  (region_decl
+    name: (identifier)))
+
+==================
+Mixed type and region declarations
+==================
+
+Grammar ::= TypeDecl* RegionDecl*;
+
+region A;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    components: (component (list_component (id type: (identifier))))
+    components: (component (list_component (id type: (identifier)))))
+  (region_decl
+    name: (identifier)))

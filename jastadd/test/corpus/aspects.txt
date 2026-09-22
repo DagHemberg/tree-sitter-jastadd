@@ -1,0 +1,343 @@
+==================
+Import and empty aspect
+==================
+
+import java.util.List;
+
+aspect Empty {
+}
+
+---
+
+(source_file
+  (import_declaration
+    (identifier)
+    (identifier)
+    (identifier))
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body)))
+
+==================
+Public aspect with a syn attribute declaration and equation
+==================
+
+public aspect Names {
+  syn String Node.name();
+  eq Node.name() = "x";
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    (modifiers)
+    name: (identifier)
+    body: (aspect_body
+      (attribute_declaration
+        type: (reference_type
+          (class_type
+            (identifier)))
+        target: (identifier)
+        name: (identifier))
+      (equation
+        target: (identifier)
+        name: (identifier)
+        value: (java_expression
+          (string))))))
+
+==================
+inh attribute declaration with a block equation and lazy/final modifiers
+==================
+
+aspect Inherited {
+  inh lazy final Node Node.parent();
+  eq Program.getChild().parent() {
+    return this;
+  }
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (attribute_declaration
+        type: (reference_type
+          (class_type
+            (identifier)))
+        target: (identifier)
+        name: (identifier))
+      (equation
+        target: (identifier)
+        child: (identifier)
+        name: (identifier)
+        value: (java_block
+          (identifier)
+          (identifier))))))
+
+==================
+Circular attribute with a bottom value
+==================
+
+aspect Circ {
+  syn boolean Node.reachable() circular [false];
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (attribute_declaration
+        type: (primitive_type)
+        target: (identifier)
+        name: (identifier)
+        bottom: (java_expression
+          (identifier))))))
+
+==================
+refine eq (syn) and refine eq (inh with child selector)
+==================
+
+aspect Refinements {
+  refine Names eq Node.name() = "y";
+  refine Names eq Node.getChild(int i).name() = "z";
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (refine_equation
+        aspect: (identifier)
+        target: (identifier)
+        name: (identifier)
+        value: (java_expression
+          (string)))
+      (refine_equation
+        aspect: (identifier)
+        target: (identifier)
+        child: (identifier)
+        index_param: (identifier)
+        name: (identifier)
+        value: (java_expression
+          (string))))))
+
+==================
+refine method declaration
+==================
+
+aspect RefineMethods {
+  refine Names public String Node.name() {
+    return "override";
+  }
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (refine_member
+        aspect: (identifier)
+        (modifiers)
+        return_type: (reference_type
+          (class_type
+            (identifier)))
+        target: (identifier)
+        name: (identifier)
+        (java_block
+          (identifier)
+          (string))))))
+
+==================
+rewrite declaration
+==================
+
+aspect Rewrites {
+  rewrite Node {
+    when (isBad())
+    to Node new GoodNode();
+  }
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (rewrite_declaration
+        target: (identifier)
+        condition: (java_expression
+          (identifier))
+        type: (reference_type
+          (class_type
+            (identifier)))
+        value: (java_expression
+          (identifier)
+          (identifier))))))
+
+==================
+coll declaration and contributes (value/when/for, nta, block)
+==================
+
+aspect Collections {
+  coll Set<Node> Program.allNodes() with add root Program;
+
+  Node contributes this to Program.allNodes();
+
+  Node contributes nta computeExtra() to Program.extras();
+
+  Node contributes each getItems() when isEnabled() to Program.allNodes() for each this;
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (collection_declaration
+        type: (reference_type
+          (class_type
+            (identifier)
+            (type_arguments
+              (type_argument
+                (reference_type
+                  (class_type
+                    (identifier)))))))
+        target: (identifier)
+        name: (identifier)
+        operation: (identifier)
+        root: (identifier))
+      (collection_contribution
+        target: (identifier)
+        value: (java_expression
+          (identifier))
+        collection_target: (identifier)
+        collection_name: (identifier))
+      (collection_contribution
+        target: (identifier)
+        value: (java_expression
+          (identifier))
+        collection_target: (identifier)
+        collection_name: (identifier))
+      (collection_contribution
+        target: (identifier)
+        value: (java_expression
+          (identifier))
+        condition: (java_expression
+          (identifier))
+        collection_target: (identifier)
+        collection_name: (identifier)
+        reference: (java_expression
+          (identifier))))))
+
+==================
+add interface, extend interface, cache/uncache
+==================
+
+aspect Interfaces {
+  Node implements Comparable, Named;
+  Named extends Node;
+  cache Node.name();
+  uncache Node.name();
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (add_interface
+        target: (identifier)
+        (reference_type
+          (class_type
+            (identifier)))
+        (reference_type
+          (class_type
+            (identifier))))
+      (extend_interface
+        target: (identifier)
+        (reference_type
+          (class_type
+            (identifier))))
+      (cache_declaration
+        target: (identifier)
+        name: (identifier))
+      (cache_declaration
+        target: (identifier)
+        name: (identifier)))))
+
+==================
+Plain method and field members attached to a node type
+==================
+
+aspect Plain {
+  void Node.dump() {
+    System.out.println(this);
+  }
+
+  private int Node.counter = 0;
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (plain_member
+        type: (primitive_type)
+        target: (identifier)
+        name: (identifier)
+        body: (java_block
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier)))
+      (plain_member
+        (modifiers)
+        type: (primitive_type)
+        target: (identifier)
+        name: (identifier)
+        value: (java_expression
+          (number))))))
+
+==================
+Nested class declaration with an opaque body
+==================
+
+aspect WithHelper {
+  class Helper {
+    int x = 1;
+
+    int get() {
+      return x;
+    }
+  }
+}
+
+---
+
+(source_file
+  (aspect_declaration
+    name: (identifier)
+    body: (aspect_body
+      (type_declaration
+        name: (identifier)
+        body: (identifier)
+        body: (identifier)
+        body: (number)
+        body: (identifier)
+        body: (identifier)
+        body: (identifier)
+        body: (identifier)))))

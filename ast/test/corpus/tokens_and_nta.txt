@@ -1,0 +1,102 @@
+==================
+Token component with default type
+==================
+
+TypeDecl ::= <Name>;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    components: (component (token_component (token_id name: (identifier))))))
+
+==================
+Token component with primitive type
+==================
+
+TypeDecl ::= <StartLine:int>;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    components: (component
+      (token_component
+        (token_id name: (identifier) type: (primitive_type))))))
+
+==================
+Token component with generic reference type
+==================
+
+AttrDecl ::= <CacheMode:CacheMode> <Value:List<String>>;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    components: (component
+      (token_component
+        (token_id name: (identifier) type: (reference_type (class_type (identifier))))))
+    components: (component
+      (token_component
+        (token_id
+          name: (identifier)
+          type: (reference_type
+            (class_type
+              (identifier)
+              (type_arguments (type_argument (reference_type (class_type (identifier))))))))))))
+
+==================
+NTA component variants
+==================
+
+TypeDecl ::= /Foo*/ /[Bar]/ /<Baz:int>/ /Qux/;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    components: (component (nta_list_component (id type: (identifier))))
+    components: (component (nta_optional_component (id type: (identifier))))
+    components: (component (nta_token_component (token_id name: (identifier) type: (primitive_type))))
+    components: (component (nta_aggregate_component (id type: (identifier))))))
+
+==================
+Array reference type on a token component
+==================
+
+TypeDecl ::= <Items:String[]>;
+
+---
+
+(source_file
+  (type_decl
+    name: (identifier)
+    components: (component
+      (token_component
+        (token_id
+          name: (identifier)
+          type: (reference_type (class_type (identifier))))))))
+
+==================
+Comments: line, block, and doc
+==================
+
+// a line comment
+/* a block comment */
+/** a doc comment */
+TypeDecl ::= Component*;
+
+---
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (type_decl
+    name: (identifier)
+    components: (component (list_component (id type: (identifier))))))
