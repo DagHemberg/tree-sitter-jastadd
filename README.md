@@ -8,6 +8,8 @@ Tree-sitter grammars and Neovim highlight queries for [JastAdd2][jastadd]'s own 
 - **`.ast`** — JastAdd abstract grammar files. Parser: `jastadd_ast` (directory: [`ast/`](ast)).
 - **`.jrag` / `.jadd`** — JastAdd aspect files (declarative / imperative convention only; both are parsed identically). Parser: `jastadd` (directory: [`jastadd/`](jastadd)).
 
+<img width="1472" height="879" alt="Skärmavbild 2026-09-23 kl  16 46 38" src="https://github.com/user-attachments/assets/6b9946f0-a016-4c9c-a8b8-7663bdb0ceb4" />
+
 [jastadd]: https://jastadd.cs.lth.se/web/
 
 ## Design
